@@ -15,8 +15,10 @@ export default function Navbar() {
       <AppBar position="static" color="transparent">
         <Container>
           <Toolbar>
-            <Typography variant='h6' sx={{ flexGrow: 1}}>
-              <Link to="/" style={{textDecoration:"none", color:"#eee"}} >PERN STACK</Link>
+            <Typography variant="h6" sx={{ flexGrow: 1 }}>
+              <Link to="/" style={{ textDecoration: "none", color: "#eee" }}>
+                PERN STACK
+              </Link>
             </Typography>
             <Button
               variant="contained"
