@@ -15,7 +15,7 @@ const getTaskId = async (req, res, next) => {
     try {
         const id = parseInt(req.params.id);
         const response = await pool.query('SELECT * FROM tasks WHERE id = $1', [id]);
-        res.json(response.rows);
+        await res.json(response.rows[0]);
     } catch (error) {
         next(error)
     }

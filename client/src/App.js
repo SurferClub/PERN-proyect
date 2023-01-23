@@ -4,6 +4,7 @@ import TaskList from "./components/TaskList";
 import Menu from "./components/Navbar";
 import { Container } from "@mui/material";
 
+
 function App() {
   return (
     <BrowserRouter>
@@ -12,6 +13,7 @@ function App() {
         <Routes>
           <Route path="/task/new" element={<TaskForm />}></Route>
           <Route path="/" element={<TaskList />}></Route>
+          <Route path="/task/:id/edit" element={<TaskForm/>}></Route>
         </Routes>
       </Container>
     </BrowserRouter>

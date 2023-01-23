@@ -7,12 +7,13 @@ import {
   Button,
   CircularProgress,
 } from "@mui/material";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 function TaskForm() {
   const navigate = useNavigate();
-
+  const params = useParams()
+  const [editing, setEditing] = useState(false)
   const [task, setTask] = useState({
     title: "",
     description: "",
@@ -21,24 +22,48 @@ function TaskForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const res = await fetch("http://localhost:4000/tasks", {
-      method: "POST",
-      body: JSON.stringify(task),
-      headers: { "Content-Type": "application/json" },
-    });
 
-    const data = await res.json();
+    if (editing){
+        await fetch(`http://localhost:4000/tasks/${params.id}`,{
+          method:"PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(task)
+        })
+    } else {
+      const res = await fetch("http://localhost:4000/tasks", {
+        method: "POST",
+        body: JSON.stringify(task),
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await res.json();
+      console.log(data);  
+    }
+    
 
     setLoading(false);
     navigate("/");
 
-    console.log(data);
   };
 
-  const handleChange = (e) => {
+  
+  const handleChange = (e) => 
     setTask({ ...task, [e.target.name]: e.target.value });
     //console.log(e.target.name, e.target.value);
-  };
+  
+  const loadTask =  async (id)=> {
+    const res = await fetch(`http://localhost:4000/tasks/${id}`)
+    const data = await res.json()
+    console.log(data)
+    setTask({title:data.title, description:data.description})
+    setEditing(true)
+  }
+  useEffect(()=> {
+    if (params.id) {
+      loadTask(params.id)
+    }
+  },[params.id])
 
   return (
     <Grid container direccion="column">
@@ -50,7 +75,7 @@ function TaskForm() {
         }}
       >
         <Typography textAlign="center" variant="5" color="white">
-          Create Task
+          {editing ? "Edit Task": "Create Task"}
         </Typography>
         <CardContent>
           <form onSubmit={handleSubmit}>
@@ -59,6 +84,7 @@ function TaskForm() {
                 display: "block",
                 margin: "0.5rem 0",
               }}
+              value={task.title}
               variant="filled"
               label="Write your title"
               inputProps={{ style: { color: "white" } }}
@@ -68,6 +94,7 @@ function TaskForm() {
             />
 
             <TextField
+              value={task.description}
               name="description"
               onChange={handleChange}
               variant="filled"
@@ -87,11 +114,10 @@ function TaskForm() {
               type="submit"
               disabled={!task.title || !task.description}
             >
-              {loading ? (
-                <CircularProgress color="inherit" size={24} />
-              ) : (
-                "create"
+              {loading ? (<CircularProgress color="inherit" size={24} />) : (
+                ""
               )}
+              {editing ? "Edit": "Save"}
             </Button>
           </form>
         </CardContent>
